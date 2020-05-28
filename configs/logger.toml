@@ -1,0 +1,9 @@
+[Logger]
+      maxSize= 500
+      maxAge= 30
+      logDir= "logs"
+      name= "fileSystem"
+      debug= true
+      console= true
+[Logger.level]
+      main=-1

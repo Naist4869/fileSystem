@@ -23,6 +23,7 @@ service Demo {
       get: "/kratos-demo/say_hello"
     };
   };
+  rpc MediaIDGet(MediaIDReq) returns (MediaIDResp);
 }
 
 message HelloReq {
@@ -31,4 +32,14 @@ message HelloReq {
 
 message HelloResp {
   string Content = 1 [(gogoproto.jsontag) = 'content'];
+}
+
+
+message MediaIDReq{
+  string  fakeID=1;
+  int64 timestamp =2;
+}
+
+message MediaIDResp{
+  string MediaID =1;
 }

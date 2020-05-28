@@ -111,37 +111,125 @@ func (m *HelloResp) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_HelloResp proto.InternalMessageInfo
 
+type MediaIDReq struct {
+	FakeID               string   `protobuf:"bytes,1,opt,name=fakeID,proto3" json:"fakeID,omitempty"`
+	Timestamp            int64    `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MediaIDReq) Reset()         { *m = MediaIDReq{} }
+func (m *MediaIDReq) String() string { return proto.CompactTextString(m) }
+func (*MediaIDReq) ProtoMessage()    {}
+func (*MediaIDReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{2}
+}
+func (m *MediaIDReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MediaIDReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MediaIDReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MediaIDReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MediaIDReq.Merge(m, src)
+}
+func (m *MediaIDReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *MediaIDReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_MediaIDReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MediaIDReq proto.InternalMessageInfo
+
+type MediaIDResp struct {
+	MediaID              string   `protobuf:"bytes,1,opt,name=MediaID,proto3" json:"MediaID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MediaIDResp) Reset()         { *m = MediaIDResp{} }
+func (m *MediaIDResp) String() string { return proto.CompactTextString(m) }
+func (*MediaIDResp) ProtoMessage()    {}
+func (*MediaIDResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_00212fb1f9d3bf1c, []int{3}
+}
+func (m *MediaIDResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MediaIDResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MediaIDResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MediaIDResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MediaIDResp.Merge(m, src)
+}
+func (m *MediaIDResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *MediaIDResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_MediaIDResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MediaIDResp proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*HelloReq)(nil), "demo.service.v1.HelloReq")
 	proto.RegisterType((*HelloResp)(nil), "demo.service.v1.HelloResp")
+	proto.RegisterType((*MediaIDReq)(nil), "demo.service.v1.MediaIDReq")
+	proto.RegisterType((*MediaIDResp)(nil), "demo.service.v1.MediaIDResp")
 }
 
 func init() { proto.RegisterFile("api.proto", fileDescriptor_00212fb1f9d3bf1c) }
 
 var fileDescriptor_00212fb1f9d3bf1c = []byte{
-	// 341 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x50, 0x3f, 0x4b, 0xc3, 0x40,
-	0x14, 0x6f, 0xb4, 0xd8, 0xf6, 0x3a, 0x08, 0x37, 0x94, 0x36, 0x4a, 0x5a, 0x22, 0x82, 0x4b, 0x2f,
-	0x58, 0x41, 0xa1, 0xe0, 0xd2, 0x2a, 0x38, 0x38, 0x48, 0xc4, 0xc5, 0x45, 0xae, 0xcd, 0x35, 0x3d,
-	0x4c, 0xee, 0x5d, 0x93, 0x6b, 0xa1, 0xab, 0x5f, 0xc1, 0xc5, 0x8f, 0xd4, 0x51, 0x70, 0x2f, 0xda,
-	0x3a, 0x39, 0xfa, 0x09, 0x24, 0x97, 0x04, 0x41, 0xa8, 0xdb, 0xbd, 0xdf, 0xbf, 0x7b, 0xbf, 0x87,
-	0x2a, 0x54, 0x72, 0x22, 0x23, 0x50, 0x80, 0x77, 0x3d, 0x16, 0x02, 0x89, 0x59, 0x34, 0xe3, 0x43,
-	0x46, 0x66, 0xc7, 0x66, 0xdb, 0xe7, 0x6a, 0x3c, 0x1d, 0x90, 0x21, 0x84, 0x8e, 0x0f, 0x3e, 0x38,
-	0x5a, 0x37, 0x98, 0x8e, 0xf4, 0xa4, 0x07, 0xfd, 0x4a, 0xfd, 0xe6, 0x9e, 0x0f, 0xe0, 0x07, 0xec,
-	0x57, 0xc5, 0x42, 0xa9, 0xe6, 0x19, 0xb9, 0x9f, 0x91, 0x54, 0x72, 0x87, 0x0a, 0x01, 0x8a, 0x2a,
-	0x0e, 0x22, 0x4e, 0x59, 0xbb, 0x8f, 0xca, 0x57, 0x2c, 0x08, 0xc0, 0x65, 0x13, 0x7c, 0x86, 0x8a,
-	0x82, 0x86, 0xac, 0x6e, 0xb4, 0x8c, 0xa3, 0x4a, 0xef, 0xe0, 0x7b, 0xd9, 0x6c, 0x8e, 0x20, 0x0a,
-	0xbb, 0x76, 0x82, 0xda, 0xad, 0x19, 0x0d, 0xb8, 0x47, 0x15, 0xeb, 0xda, 0x11, 0x9b, 0x4c, 0x79,
-	0xc4, 0x3c, 0xdb, 0xd5, 0x06, 0xbb, 0x83, 0x2a, 0x59, 0x48, 0x2c, 0xf1, 0x21, 0x2a, 0xf5, 0x41,
-	0x28, 0x26, 0x54, 0x16, 0x54, 0xfd, 0x5a, 0x36, 0x4b, 0xc3, 0x14, 0x72, 0x73, 0xae, 0xb3, 0x36,
-	0x50, 0xf1, 0x82, 0x85, 0x80, 0x4f, 0x51, 0xf1, 0x86, 0x0b, 0x1f, 0xd7, 0x48, 0xba, 0x28, 0xc9,
-	0x5b, 0x90, 0xcb, 0xa4, 0x85, 0xb9, 0x01, 0xc7, 0xe7, 0xa8, 0x7c, 0x4b, 0xe7, 0xfa, 0x5f, 0xdc,
-	0x20, 0x7f, 0x2e, 0x48, 0xf2, 0x52, 0x1b, 0xed, 0x1e, 0xaa, 0xe6, 0xf6, 0x3b, 0xf7, 0xfa, 0xbf,
-	0x04, 0x73, 0x13, 0x15, 0x4b, 0xdb, 0x7a, 0x7a, 0xfb, 0x7c, 0xde, 0xaa, 0xe3, 0x9a, 0xf3, 0x18,
-	0x51, 0x05, 0x71, 0x3b, 0x91, 0x3a, 0x31, 0x9d, 0x3f, 0x8c, 0x13, 0x4d, 0xaf, 0xb1, 0xf8, 0xb0,
-	0x0a, 0x8b, 0x95, 0x65, 0xbc, 0xae, 0x2c, 0xe3, 0x7d, 0x65, 0x19, 0x2f, 0x6b, 0xab, 0x70, 0xbf,
-	0x4d, 0x25, 0x1f, 0xec, 0xe8, 0x85, 0x4e, 0x7e, 0x02, 0x00, 0x00, 0xff, 0xff, 0x59, 0x9e, 0x74,
-	0x3f, 0x08, 0x02, 0x00, 0x00,
+	// 421 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x51, 0x41, 0x8b, 0xd3, 0x40,
+	0x18, 0xdd, 0x74, 0xcb, 0x76, 0x33, 0x3d, 0x08, 0x73, 0x28, 0xd9, 0x6c, 0x49, 0xcb, 0x88, 0xb8,
+	0x97, 0x9d, 0xe0, 0x0a, 0x0a, 0x0b, 0x5e, 0xba, 0x95, 0x75, 0x41, 0x41, 0x22, 0x5e, 0xbc, 0xc8,
+	0xb4, 0xf9, 0x9a, 0x1d, 0x36, 0x93, 0x99, 0x66, 0xa6, 0x85, 0x5e, 0xfd, 0x0b, 0x5e, 0xfc, 0x11,
+	0xfe, 0x90, 0x1e, 0x05, 0xef, 0x45, 0xab, 0x27, 0x8f, 0xfe, 0x02, 0xc9, 0x24, 0x69, 0x41, 0x89,
+	0xb7, 0x79, 0xef, 0x7d, 0xef, 0xcd, 0x7c, 0x6f, 0x90, 0xcb, 0x14, 0xa7, 0x2a, 0x97, 0x46, 0xe2,
+	0x7b, 0x31, 0x08, 0x49, 0x35, 0xe4, 0x4b, 0x3e, 0x05, 0xba, 0x7c, 0xe4, 0x9f, 0x27, 0xdc, 0xdc,
+	0x2e, 0x26, 0x74, 0x2a, 0x45, 0x98, 0xc8, 0x44, 0x86, 0x76, 0x6e, 0xb2, 0x98, 0x59, 0x64, 0x81,
+	0x3d, 0x95, 0x7e, 0xff, 0x34, 0x91, 0x32, 0x49, 0x61, 0x3f, 0x05, 0x42, 0x99, 0x55, 0x25, 0xf6,
+	0x2b, 0x91, 0x29, 0x1e, 0xb2, 0x2c, 0x93, 0x86, 0x19, 0x2e, 0x33, 0x5d, 0xaa, 0xe4, 0x0a, 0x1d,
+	0xbf, 0x80, 0x34, 0x95, 0x11, 0xcc, 0xf1, 0x53, 0xd4, 0xce, 0x98, 0x00, 0xcf, 0x19, 0x3a, 0x67,
+	0xee, 0xe8, 0xfe, 0xef, 0xcd, 0x60, 0x30, 0x93, 0xb9, 0xb8, 0x24, 0x05, 0x4b, 0x86, 0x4b, 0x96,
+	0xf2, 0x98, 0x19, 0xb8, 0x24, 0x39, 0xcc, 0x17, 0x3c, 0x87, 0x98, 0x44, 0xd6, 0x40, 0x2e, 0x90,
+	0x5b, 0x85, 0x68, 0x85, 0x1f, 0xa0, 0xce, 0x95, 0xcc, 0x0c, 0x64, 0xa6, 0x0a, 0xea, 0xfe, 0xda,
+	0x0c, 0x3a, 0xd3, 0x92, 0x8a, 0x6a, 0x8d, 0x8c, 0x10, 0x7a, 0x05, 0x31, 0x67, 0x37, 0xe3, 0xe2,
+	0xea, 0x1e, 0x3a, 0x9a, 0xb1, 0x3b, 0xb8, 0x19, 0x97, 0x9e, 0xa8, 0x42, 0xb8, 0x8f, 0x5c, 0xc3,
+	0x05, 0x68, 0xc3, 0x84, 0xf2, 0x5a, 0x43, 0xe7, 0xec, 0x30, 0xda, 0x13, 0xe4, 0x21, 0xea, 0xee,
+	0x32, 0xb4, 0xc2, 0x1e, 0xea, 0x54, 0xb0, 0x4a, 0xa9, 0xe1, 0xc5, 0xe7, 0x16, 0x6a, 0x8f, 0x41,
+	0x48, 0xfc, 0x04, 0xb5, 0x5f, 0xf3, 0x2c, 0xc1, 0x3d, 0x5a, 0xb6, 0x42, 0xeb, 0xca, 0xe8, 0xf3,
+	0xa2, 0x32, 0xbf, 0x81, 0xc7, 0xcf, 0xd0, 0xf1, 0x1b, 0xb6, 0xb2, 0x4b, 0xe2, 0x13, 0xfa, 0xd7,
+	0x77, 0xd1, 0xba, 0xc1, 0x46, 0x7b, 0x8c, 0xba, 0xb5, 0xfd, 0x6d, 0xf4, 0xf2, 0x7f, 0x09, 0x7e,
+	0x93, 0xa4, 0x15, 0x09, 0x3e, 0x7c, 0xfd, 0xf9, 0xb1, 0xe5, 0xe1, 0x5e, 0x78, 0x97, 0x33, 0x23,
+	0xf5, 0x79, 0x31, 0x1a, 0x6a, 0xb6, 0x7a, 0x7f, 0x6b, 0x1f, 0x76, 0xbd, 0xab, 0xf4, 0x1a, 0x0c,
+	0x3e, 0xfd, 0x27, 0x69, 0xdf, 0xb7, 0xdf, 0x6f, 0x16, 0xb5, 0x1a, 0x9d, 0xac, 0xbf, 0x07, 0x07,
+	0xeb, 0x6d, 0xe0, 0x7c, 0xd9, 0x06, 0xce, 0xb7, 0x6d, 0xe0, 0x7c, 0xfa, 0x11, 0x1c, 0xbc, 0x3b,
+	0x64, 0x8a, 0x4f, 0x8e, 0xec, 0x66, 0x8f, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x64, 0x7f, 0x47,
+	0xcc, 0xbe, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -159,6 +247,7 @@ type DemoClient interface {
 	Ping(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	SayHello(ctx context.Context, in *HelloReq, opts ...grpc.CallOption) (*empty.Empty, error)
 	SayHelloURL(ctx context.Context, in *HelloReq, opts ...grpc.CallOption) (*HelloResp, error)
+	MediaIDGet(ctx context.Context, in *MediaIDReq, opts ...grpc.CallOption) (*MediaIDResp, error)
 }
 
 type demoClient struct {
@@ -196,11 +285,21 @@ func (c *demoClient) SayHelloURL(ctx context.Context, in *HelloReq, opts ...grpc
 	return out, nil
 }
 
+func (c *demoClient) MediaIDGet(ctx context.Context, in *MediaIDReq, opts ...grpc.CallOption) (*MediaIDResp, error) {
+	out := new(MediaIDResp)
+	err := c.cc.Invoke(ctx, "/demo.service.v1.Demo/MediaIDGet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DemoServer is the server API for Demo service.
 type DemoServer interface {
 	Ping(context.Context, *empty.Empty) (*empty.Empty, error)
 	SayHello(context.Context, *HelloReq) (*empty.Empty, error)
 	SayHelloURL(context.Context, *HelloReq) (*HelloResp, error)
+	MediaIDGet(context.Context, *MediaIDReq) (*MediaIDResp, error)
 }
 
 // UnimplementedDemoServer can be embedded to have forward compatible implementations.
@@ -215,6 +314,9 @@ func (*UnimplementedDemoServer) SayHello(ctx context.Context, req *HelloReq) (*e
 }
 func (*UnimplementedDemoServer) SayHelloURL(ctx context.Context, req *HelloReq) (*HelloResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHelloURL not implemented")
+}
+func (*UnimplementedDemoServer) MediaIDGet(ctx context.Context, req *MediaIDReq) (*MediaIDResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MediaIDGet not implemented")
 }
 
 func RegisterDemoServer(s *grpc.Server, srv DemoServer) {
@@ -275,6 +377,24 @@ func _Demo_SayHelloURL_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Demo_MediaIDGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MediaIDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DemoServer).MediaIDGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/demo.service.v1.Demo/MediaIDGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DemoServer).MediaIDGet(ctx, req.(*MediaIDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Demo_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "demo.service.v1.Demo",
 	HandlerType: (*DemoServer)(nil),
@@ -290,6 +410,10 @@ var _Demo_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHelloURL",
 			Handler:    _Demo_SayHelloURL_Handler,
+		},
+		{
+			MethodName: "MediaIDGet",
+			Handler:    _Demo_MediaIDGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -364,6 +488,79 @@ func (m *HelloResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MediaIDReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MediaIDReq) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MediaIDReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timestamp != 0 {
+		i = encodeVarintApi(dAtA, i, uint64(m.Timestamp))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.FakeID) > 0 {
+		i -= len(m.FakeID)
+		copy(dAtA[i:], m.FakeID)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.FakeID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MediaIDResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MediaIDResp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MediaIDResp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.MediaID) > 0 {
+		i -= len(m.MediaID)
+		copy(dAtA[i:], m.MediaID)
+		i = encodeVarintApi(dAtA, i, uint64(len(m.MediaID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintApi(dAtA []byte, offset int, v uint64) int {
 	offset -= sovApi(v)
 	base := offset
@@ -398,6 +595,41 @@ func (m *HelloResp) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Content)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MediaIDReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.FakeID)
+	if l > 0 {
+		n += 1 + l + sovApi(uint64(l))
+	}
+	if m.Timestamp != 0 {
+		n += 1 + sovApi(uint64(m.Timestamp))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *MediaIDResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.MediaID)
 	if l > 0 {
 		n += 1 + l + sovApi(uint64(l))
 	}
@@ -559,6 +791,197 @@ func (m *HelloResp) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Content = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MediaIDReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MediaIDReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MediaIDReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FakeID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FakeID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
+			}
+			m.Timestamp = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Timestamp |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipApi(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApi
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MediaIDResp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowApi
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MediaIDResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MediaIDResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MediaID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowApi
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthApi
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApi
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MediaID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

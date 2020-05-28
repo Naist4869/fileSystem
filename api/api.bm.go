@@ -28,6 +28,7 @@ var _ binding.StructValidator
 var PathDemoPing = "/demo.service.v1.Demo/Ping"
 var PathDemoSayHello = "/demo.service.v1.Demo/SayHello"
 var PathDemoSayHelloURL = "/kratos-demo/say_hello"
+var PathDemoMediaIDGet = "/demo.service.v1.Demo/MediaIDGet"
 
 // DemoBMServer is the server API for Demo service.
 type DemoBMServer interface {
@@ -36,6 +37,8 @@ type DemoBMServer interface {
 	SayHello(ctx context.Context, req *HelloReq) (resp *google_protobuf1.Empty, err error)
 
 	SayHelloURL(ctx context.Context, req *HelloReq) (resp *HelloResp, err error)
+
+	MediaIDGet(ctx context.Context, req *MediaIDReq) (resp *MediaIDResp, err error)
 }
 
 var DemoSvc DemoBMServer
@@ -67,10 +70,20 @@ func demoSayHelloURL(c *bm.Context) {
 	c.JSON(resp, err)
 }
 
+func demoMediaIDGet(c *bm.Context) {
+	p := new(MediaIDReq)
+	if err := c.BindWith(p, binding.Default(c.Request.Method, c.Request.Header.Get("Content-Type"))); err != nil {
+		return
+	}
+	resp, err := DemoSvc.MediaIDGet(c, p)
+	c.JSON(resp, err)
+}
+
 // RegisterDemoBMServer Register the blademaster route
 func RegisterDemoBMServer(e *bm.Engine, server DemoBMServer) {
 	DemoSvc = server
 	e.GET("/demo.service.v1.Demo/Ping", demoPing)
 	e.GET("/demo.service.v1.Demo/SayHello", demoSayHello)
 	e.GET("/kratos-demo/say_hello", demoSayHelloURL)
+	e.GET("/demo.service.v1.Demo/MediaIDGet", demoMediaIDGet)
 }

@@ -15,5 +15,7 @@
 # vendor/
 .idea/
 .vscode/
-./config/config.yaml
-./logs
+./logs/
+./configs/application.toml
+./wx.cookies
+./wx.token
