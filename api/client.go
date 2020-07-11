@@ -13,13 +13,13 @@ import (
 const AppID = "TODO: ADD APP ID"
 
 // NewClient new grpc client
-func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (DemoClient, error) {
+func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (FileSystemClient, error) {
 	client := warden.NewClient(cfg, opts...)
 	cc, err := client.Dial(context.Background(), fmt.Sprintf("discovery://default/%s", AppID))
 	if err != nil {
 		return nil, err
 	}
-	return NewDemoClient(cc), nil
+	return NewFileSystemClient(cc), nil
 }
 
 // 生成 gRPC 代码

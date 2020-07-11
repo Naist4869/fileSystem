@@ -15,7 +15,7 @@ package demo.service.v1;
 option go_package = "api";
 option (gogoproto.goproto_getters_all) = false;
 
-service Demo {
+service FileSystem {
   rpc Ping(.google.protobuf.Empty) returns (.google.protobuf.Empty);
   rpc SayHello(HelloReq) returns (.google.protobuf.Empty);
   rpc SayHelloURL(HelloReq) returns (HelloResp) {

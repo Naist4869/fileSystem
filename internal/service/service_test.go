@@ -1,9 +1,18 @@
 package service
 
 import (
+	"context"
+	"fileSystem/internal/server/grpc"
+	"flag"
 	"fmt"
+	"os"
 	"regexp"
 	"testing"
+	"time"
+
+	"github.com/go-kratos/kratos/pkg/conf/paladin"
+	"github.com/go-kratos/kratos/pkg/testing/lich"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 var test = []byte(`<!DOCTYPE html><html>    <head>        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="renderer" content="webkit"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0"><meta charset="utf-8"><script type="text/javascript">
@@ -981,9 +990,50 @@ define('widget/pagination.css', [], function(){return null;});</script><script o
   }
 </script>    </body></html>`)
 
+var testService *Service
+var ctx = context.Background()
+
+func TestMain(m *testing.M) {
+	flag.Set("conf", "../../test")
+	flag.Set("f", "../../test/docker-compose.yaml")
+	flag.Parse()
+	disableLich := os.Getenv("DISABLE_LICH") != ""
+	if !disableLich {
+		if err := lich.Setup(); err != nil {
+			panic(err)
+		}
+	}
+	var err error
+	if err = paladin.Init(); err != nil {
+		panic(err)
+	}
+	var cf func()
+	if _, err = grpc.New(testService); err != nil {
+		panic(err)
+	}
+	time.Sleep(time.Second * 10)
+	if testService, cf, err = newTestService(); err != nil {
+		panic(err)
+	}
+
+	ret := m.Run()
+	cf()
+	if !disableLich {
+		_ = lich.Teardown()
+	}
+	os.Exit(ret)
+}
+
 // list : ({"msg_item":[{"date_time":1590495563,"fakeid
 func TestRegexp(t *testing.T) {
 	re := regexp.MustCompile(`list[\s]*\:[\s]+\(([^\)]*)`)
 	matches := re.FindSubmatch(test)
 	fmt.Printf("%s", matches[1])
+}
+
+func TestService_materialListGet(t *testing.T) {
+	Convey("获取素材列表", t, func() {
+		err := testService.materialListGet(ctx)
+		So(err, ShouldBeNil)
+	})
 }

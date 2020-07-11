@@ -31,3 +31,9 @@ type MsgItemResp struct {
 		WxHeadimgURL    string        `json:"wx_headimg_url"`
 	} `json:"msg_item"`
 }
+
+type materialListGetReq struct {
+	Type   string `json:"type"`   // 素材的类型，图片（image）、视频（video）、语音 （voice）、图文（news）
+	Offset int    `json:"offset"` // 	从全部素材的该偏移位置开始返回，0表示从第一个素材 返回
+	Count  int    `json:"count"`  // 返回素材的数量，取值在1到20之间
+}

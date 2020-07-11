@@ -11,10 +11,10 @@ import (
 	bm "github.com/go-kratos/kratos/pkg/net/http/blademaster"
 )
 
-var svc pb.DemoServer
+var svc pb.FileSystemServer
 
 // New new a bm server.
-func New(s pb.DemoServer) (engine *bm.Engine, err error) {
+func New(s pb.FileSystemServer) (engine *bm.Engine, err error) {
 	var (
 		cfg struct {
 			Server *bm.ServerConfig
@@ -32,7 +32,7 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 	}
 	svc = s
 	engine = bm.DefaultServer(cfg.Server)
-	pb.RegisterDemoBMServer(engine, s)
+	pb.RegisterFileSystemBMServer(engine, s)
 	initRouter(engine)
 	err = engine.Start()
 	return

@@ -46,7 +46,7 @@ import (
 	"github.com/google/wire"
 )
 
-var Provider = wire.NewSet(New, wire.Bind(new(pb.DemoServer), new(*Service)), NewLogger, NewBmClient, NewSimpleJar)
+var Provider = wire.NewSet(New, wire.Bind(new(pb.FileSystemServer), new(*Service)), NewLogger, NewBmClient, NewSimpleJar)
 var MsgRE = regexp.MustCompile(`list[\s]*\:[\s]+\(([^\)]*)`)
 
 //  请重新<a id='jumpUrl' href='/'>登录</a>
@@ -381,30 +381,25 @@ func (s *Service) MediaIDGet(ctx context.Context, req *pb.MediaIDReq) (resp *pb.
 	defer reqReader.Close() // 可以不写
 	bodyWriter := multipart.NewWriter(reqWriter)
 
-	storeSign := s.store(reader, bodyWriter, "abcabc"+typ[0], contentType)
+	storeSign := s.store(ctx, reader, bodyWriter, "abcabc"+typ[0], contentType)
 	upload := s.upload(ctx, reqReader, bodyWriter.FormDataContentType())
-	var activeUploadSign <-chan uploadSign
 	for {
 		select {
 		case store, open := <-storeSign:
 			if !open {
 				storeSign = nil
 			} else {
-				s.Logger.Debug("Form写完未关闭状态")
-				bodyWriter.Close()
-				s.Logger.Debug("Form写完已关闭状态")
 				if store.err != nil {
 					err = fmt.Errorf("store错误%w", store.err)
 					return
 				} else {
 					s.Logger.Debug("第三步,只有这里关闭了Writer才可以http.Do")
-					activeUploadSign = upload // 激活upload
-					reqWriter.Close()         // reqWriter主动关闭reqReader才不会继续阻塞
+					reqWriter.Close() // reqWriter主动关闭reqReader才不会继续阻塞
 					continue
 				}
 			}
 
-		case upload := <-activeUploadSign:
+		case upload := <-upload:
 			if upload.err != nil {
 				err = fmt.Errorf("upload错误%w", upload.err)
 				return
@@ -422,9 +417,8 @@ type storeSign struct {
 	err error
 }
 
-func (s *Service) store(reader io.Reader, bodyWriter *multipart.Writer, fileName string, contentType string) <-chan storeSign {
+func (s *Service) store(ctx context.Context, reader io.Reader, bodyWriter *multipart.Writer, fileName string, contentType string) <-chan storeSign {
 	sign := make(chan storeSign)
-
 	go func() {
 		defer close(sign)
 		var (
@@ -432,39 +426,9 @@ func (s *Service) store(reader io.Reader, bodyWriter *multipart.Writer, fileName
 			tempFile *os.File
 			part     io.Writer
 			err      error
+			second   bool
 		)
 		buffer := make([]byte, 8<<10) //8k  todo 一会做buffer池
-
-		// 生成MD5
-		hash := md5.New()
-		//生成Form文件
-		s.Logger.Debug("管道准备输出")
-		h := make(textproto.MIMEHeader)
-		h.Set("Content-Disposition",
-			fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
-				"source", fileName))
-		if contentType == "" {
-			h.Set("Content-Type", "application/octet-stream")
-		} else {
-			h.Set("Content-Type", contentType)
-		}
-		part, err = bodyWriter.CreatePart(h)
-		if err != nil {
-			err = fmt.Errorf("创建Form文件失败%w", err)
-			sign <- storeSign{
-				err: err,
-			}
-			return
-		}
-		s.Logger.Debug("第二步,reader就绪,输出数据至管道")
-		//生成临时文件
-		if tempFile, err = ioutil.TempFile("local", fileName+".*"); err != nil {
-			err = fmt.Errorf("创建临时文件失败%w", err)
-			sign <- storeSign{
-				err: err,
-			}
-			return
-		}
 		defer func() {
 			s.Logger.Info("完成存储,开始清理")
 			var cleanErr error
@@ -477,64 +441,90 @@ func (s *Service) store(reader io.Reader, bodyWriter *multipart.Writer, fileName
 				}
 			}
 		}()
-		// 同时写3份 不知道会不会有啥问题额
+	out:
 		for {
-			nr, er := reader.Read(buffer)
-			// 有读取,就写入
-			if nr > 0 {
-				if _, err = hash.Write(buffer[:nr]); err != nil {
-					err = fmt.Errorf("计算MD5%w", err)
-					sign <- storeSign{
-						err: err,
-					}
+			// 如果是第二次for循环
+			if second {
+				s.Logger.Debug("Form写完未关闭状态")
+				bodyWriter.Close()
+				s.Logger.Debug("Form写完已关闭状态")
+				select {
+				case sign <- storeSign{
+					err: err,
+				}:
 					return
-				}
-				nw, ew := tempFile.Write(buffer[:nr])
-				if ew != nil {
-					err = fmt.Errorf("写入文件错误%w", ew)
-					sign <- storeSign{
-						err: err,
-					}
-					return
-				}
-				rnw, rew := part.Write(buffer[:nr])
-				if rew != nil {
-					err = fmt.Errorf("写入Form文件错误%w", rew)
-					sign <- storeSign{
-						err: err,
-					}
-					return
-				}
-				s.Logger.Debug("第二步,reader就绪,输出数据至管道")
-
-				if nr != nw || nr != rnw {
-
-					err = fmt.Errorf("写入文件错误%w", io.ErrShortWrite)
-					sign <- storeSign{
-						err: err,
-					}
+				case <-ctx.Done():
 					return
 				}
 			}
-			if er != nil {
-				if er != io.EOF {
-					err = fmt.Errorf("读取responseBody错误%w", er)
-					sign <- storeSign{
-						err: err,
-					}
-					return
-				}
-				break
+			// 生成MD5
+			hash := md5.New()
+			//生成Form文件
+			s.Logger.Debug("管道准备输出")
+			h := make(textproto.MIMEHeader)
+			h.Set("Content-Disposition",
+				fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+					"source", fileName))
+			if contentType == "" {
+				h.Set("Content-Type", "application/octet-stream")
+			} else {
+				h.Set("Content-Type", contentType)
 			}
-			fileSize += int64(nr)
+			part, err = bodyWriter.CreatePart(h)
+			if err != nil {
+				err = fmt.Errorf("创建Form文件失败%w", err)
+				second = true
+				continue
+			}
+			s.Logger.Debug("第二步,reader就绪,输出数据至管道")
+			//生成临时文件
+			if tempFile, err = ioutil.TempFile("local", fileName+".*"); err != nil {
+				err = fmt.Errorf("创建临时文件失败%w", err)
+				second = true
+				continue
+			}
+
+			// 同时写3份 不知道会不会有啥问题额
+			for {
+				nr, er := reader.Read(buffer)
+				// 有读取,就写入
+				if nr > 0 {
+					if _, err = hash.Write(buffer[:nr]); err != nil {
+						err = fmt.Errorf("计算MD5%w", err)
+						second = true
+						continue out
+					}
+					nw, ew := tempFile.Write(buffer[:nr])
+					if ew != nil {
+						err = fmt.Errorf("写入文件错误%w", ew)
+						second = true
+						continue out
+
+					}
+					rnw, rew := part.Write(buffer[:nr])
+					if rew != nil {
+						err = fmt.Errorf("写入Form文件错误%w", rew)
+						second = true
+						continue out
+					}
+					s.Logger.Debug("第二步,reader就绪,输出数据至管道")
+
+					if nr != nw || nr != rnw {
+						err = fmt.Errorf("写入文件错误%w", io.ErrShortWrite)
+						second = true
+						continue out
+					}
+					fileSize += int64(nr)
+				}
+				if er != nil {
+					if er != io.EOF {
+						err = fmt.Errorf("读取responseBody错误%w", er)
+					}
+					second = true
+					continue out
+				}
+			}
 		}
-		sign <- storeSign{
-			err: err,
-			//fileSize: fileSize,
-			//filePath: tempFile.Name(),
-			//md5:      fmt.Sprintf("%x", hash.Sum(nil)),
-		}
-		return
 		// todo 存储数据
 	}()
 
@@ -556,8 +546,13 @@ type uploadSign struct {
 
 // 微信服务端上传不支持chunked  啥年代了还不支持 坑了我几天
 func (s *Service) upload(ctx context.Context, reader io.Reader, contentType string) <-chan uploadSign {
-	var quota float64
-	var data = &bytes.Buffer{}
+	var (
+		quota   float64
+		data    = &bytes.Buffer{}
+		err     error
+		request *http.Request
+		mediaID string
+	)
 	sign := make(chan uploadSign)
 	uploadURI := "https://api.weixin.qq.com/cgi-bin/media/upload"
 	query := url.Values{}
@@ -567,24 +562,30 @@ func (s *Service) upload(ctx context.Context, reader io.Reader, contentType stri
 	go func() {
 		defer close(sign)
 		for {
-			select {
-			case <-ctx.Done():
-				return
-			default:
+			// 第二次循环才会进入
+			if err != nil || mediaID != "" {
+				select {
+				case <-ctx.Done():
+					return
+				case sign <- uploadSign{
+					err:     err,
+					mediaID: mediaID,
+				}:
+					return
+				}
 			}
 			s.Logger.Debug("第一步,准备构建请求从管道读取数据")
 
 			// 这个沙雕一样的代码是为了兼容微信公众平台   开了goroutine实际上是串行处理
 			{
-				io.Copy(data, reader)
+				if _, err = io.Copy(data, reader); err != nil {
+					continue
+				}
 			}
 
-			request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s?%s", uploadURI, encode), data)
+			request, err = http.NewRequest(http.MethodPost, fmt.Sprintf("%s?%s", uploadURI, encode), data)
 			if err != nil {
-				sign <- uploadSign{
-					err: err,
-				}
-				return
+				continue
 			}
 			request.Header.Set("Content-Type", contentType)
 			resp := &uploadResp{}
@@ -599,24 +600,15 @@ func (s *Service) upload(ctx context.Context, reader io.Reader, contentType stri
 				if deadline, ok := ctx.Deadline(); ok {
 					quota = time.Until(deadline).Seconds()
 				}
-
 				err = fmt.Errorf("http.DO错误,超时:%2f,错误:%w", quota, err)
-				sign <- uploadSign{
-					err: err,
-				}
+				continue
 			}
 			if resp.Code != 0 {
 				err = fmt.Errorf("错误代码: %d,错误信息: %s", resp.Code, resp.ErrMsg)
-				sign <- uploadSign{
-					err: err,
-				}
-				return
+				continue
 			}
-
-			sign <- uploadSign{
-				mediaID: resp.MediaID,
-			}
-			return
+			mediaID = resp.MediaID
+			continue
 		}
 	}()
 	return sign
@@ -1046,7 +1038,6 @@ func New(d dao.Dao, l *log.Logger, client *bm.Client, jar *SimpleJar) (s *Servic
 
 // SayHello grpc demo func.
 func (s *Service) SayHello(ctx context.Context, req *pb.HelloReq) (reply *empty.Empty, err error) {
-	ctx, _ = context.WithTimeout(context.Background(), time.Minute)
 	reply = new(empty.Empty)
 	fmt.Printf("hello %s", req.Name)
 	return
@@ -1068,4 +1059,33 @@ func (s *Service) Ping(ctx context.Context, e *empty.Empty) (*empty.Empty, error
 
 // Close close the resource.
 func (s *Service) Close() {
+}
+
+// 获取素材列表
+func (s *Service) materialListGet(ctx context.Context) (err error) {
+	batchget_material_uri := "https://api.weixin.qq.com/cgi-bin/material/batchget_material"
+	query := url.Values{}
+	query.Set("access_token", s.AccessToken().AccessToken)
+	req := materialListGetReq{
+		Type:   "news",
+		Offset: 0,
+		Count:  10,
+	}
+	var (
+		data    []byte
+		request *http.Request
+	)
+	data, err = json.Marshal(req)
+	if err != nil {
+		return err
+	}
+	request, err = http.NewRequest(http.MethodPost, batchget_material_uri+"?"+query.Encode(), bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+	err = s.client.JSON(ctx, request, nil)
+	if err != nil {
+		return err
+	}
+	return nil
 }
